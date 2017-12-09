@@ -195,6 +195,11 @@ button {
   outline: none;
 }
 
+button#submit {
+	width: 30px;
+	height: 30px;
+}
+
 button.selected {
   background-color: white;
   color: black;
@@ -216,9 +221,13 @@ h1 {
 }
 
 div#header {
-  padding: 4px;
+  padding: 4px 4px 0px 10px;
   margin: 4px auto;
   height: auto;
+}
+
+a {
+	color: tomato;
 }
 
 span#wxHeader {
