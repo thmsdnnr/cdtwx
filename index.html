@@ -1,0 +1,28 @@
+<html>
+<head>
+  <title>cdt weather</title>
+  <script src="./bundle.js"></script>
+  <link rel="stylesheet" type="text/css" href="./style.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div id="container">
+    <div id="header">
+      <span id="header"><em>cdt weather</em></span><br />
+      <span id="attr">waypoints by <a href="http://www.bearcreeksurvey.com/">Bear Creek Survey</a></span>
+    </div>
+    <div id="buttons">
+      <button id="NM" class="state selected">New Mexico</button>
+      <button id="CO" class="state">Colorado</button>
+      <button id="WY" class="state">Wyoming</button>
+      <button id="IDMT" class="state">Idaho+Montana</button>
+    </div>
+    <div id="dropdown">
+        <select name="select" id="loc"></select>
+        <button id="submit">go!</button>
+    </div>
+    <div class="alerts"></div>
+    <div class="forecast"><div class="loader"></div></div>
+  </div>
+</body>
+</html>

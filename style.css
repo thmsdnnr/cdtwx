@@ -1,0 +1,292 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+input,
+label,
+select,
+button,
+textarea
+{
+	margin:0;
+	border:0;
+	padding:0;
+	display:inline-block;
+	vertical-align:middle;
+	white-space:normal;``
+	background:none;
+	line-height:1;
+	/* Browsers have different default form fonts */
+	font-size: 13px;
+	font-family: Arial, sans-serif;
+}
+
+body {
+  font-family: Courier;
+  font-size: 0.9em;
+}
+
+div#container {
+  width: 99%;
+  margin: 2px auto;
+  overflow-x: hidden;
+  border: 1px solid black;
+}
+
+div.forecast {
+  display: flex;
+  width: 95%;
+  padding: 4px 0px 10px;
+  height: auto;
+  flex-flow: row wrap;
+  font-size: 0.9em;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.forecastPeriod {
+  flex: auto;
+  width: 100%;
+  height: auto;
+  padding: 4px;
+  margin: 4px 0px;
+  border: 1px solid black;
+  overflow-y: scroll;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.14), 0 3px 3px rgba(0,0,0,0.11);
+}
+
+img {
+  height: auto;
+  width: auto;
+  float: right;
+  vertical-align: top;
+  margin: 0px;
+  padding-left: 4px;
+}
+
+div.alerts {
+  display: none;
+  width: 94%;
+  margin-top: 8px;
+  padding: 4px;
+  height: auto;
+  max-height: 50px;
+  overflow-y: scroll;
+  flex-flow: row wrap;
+  font-size: 0.9em;
+  margin: 4px auto;
+  border: 1px solid red;
+}
+
+.alert-header {
+  flex: auto;
+  color: red;
+  font-size: 1.1em;
+  font-weight: 400;
+  text-align: center;
+}
+
+div.alerts b {
+  font-weight: bold;
+}
+
+div.forecast b {
+  font-weight: bold;
+}
+
+li.alert {
+  flex: auto;
+  padding-left: 3px;
+}
+
+span#alertHeadline {
+  font-size: 1.2em;
+  display: inline;
+}
+
+div#buttons {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 95%;
+  margin: 2px auto;
+}
+
+div#dropdown {
+  width: 95%;
+  margin: 2px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: row nowrap;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    margin: auto;
+    animation: spin 3s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+button {
+  flex: auto;
+  font-family: inherit;
+  font-size: 0.8em;
+  background-color: black;
+  color: white;
+  border: 1px solid black;
+  padding: 4px;
+  margin: 4px;
+  outline: none;
+}
+
+button.selected {
+  background-color: white;
+  color: black;
+  border: 1.2px solid gold;
+}
+
+select {
+  flex: auto;
+  width: 80%;
+  border: 1px solid black;
+  outline: none;
+}
+
+h1 {
+  padding: 0;
+  span: 0;
+  font-size: 1.2em;
+  letter-spacing: 0.1em;
+}
+
+div#header {
+  padding: 4px;
+  margin: 4px auto;
+  height: auto;
+}
+
+span#wxHeader {
+  font-size: 1em;
+}
+
+span#header {
+  margin: 4px auto;
+  padding: 4px;
+  width: auto;
+  height: auto;
+  max-width: 98%;
+  user-select: none;
+  font-size: 1.4em;
+  letter-spacing: 0.5em;
+  font-style: italic;
+}
+
+span#attr {
+  margin: 4px auto;
+  padding-left: 4px;
+  width: auto;
+  height: auto;
+  max-width: 98%;
+  user-select: none;
+  font-size: 0.9em;
+}
+
+/*wider screens */
+  @media only screen and (min-width: 751px) {
+    div#container {
+      margin: 4px auto;
+      width: 70%;
+    }
+
+    button {
+      font-size: 1em;
+      background-color: black;
+      padding: 8px;
+      margin: 8px;
+      outline: none;
+    }
+
+    div.forecast {
+      font-size: 1.1em;
+    }
+
+    .forecastPeriod {
+      flex: auto;
+      width: 45%;
+      height: 108px;
+      padding: 10px;
+      margin: 10px 4px;
+      border: 1px solid black;
+      overflow-y: scroll;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.14), 0 3px 3px rgba(0,0,0,0.11);
+    }
+
+    div.alerts {
+      font-size: 1.1em;
+      margin-top: 8px;
+      padding: 4px 0px 4px 0px;
+      max-height: 100px;
+    }
+
+    p {
+      padding: 10px;
+    }
+}
