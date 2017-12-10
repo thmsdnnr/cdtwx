@@ -1,7 +1,16 @@
 import SS from './style.css';
 
+let G={};
+
 const ALERTS_URL = (coords) => 'https://api.weather.gov/alerts?active=1&point='+coords;
 const FORECAST_URL = (coords) => 'https://api.weather.gov/points/'+coords+'/forecast';
+const FETCH_TIMEOUT = 5000; //ms
+const parseForecast = (f) => f.split('.').filter(e=>!e.match(/wind/gi)).join('.');
+const fmtWind = (w) => w.split('to').map(e=>e.trim()).join('-');
+const showLoader = () => document.querySelector('div.loader').style.display='inline';
+const clearForecast = () => document.querySelector('div.forecast').innerHTML=`<div class="loader"></div>`;
+const hideLoader = () => document.querySelector('div.loader').style.display='none';
+const fTC = (F) => ((F-32)*5/9).toFixed(1);
 
 function populateSelector(e) {
   let data;
@@ -27,6 +36,13 @@ function populateSelector(e) {
   });
 }
 
+function timeoutPromise(timeout, err, promise) {
+  return new Promise(function(resolve,reject) {
+    promise.then(resolve,reject);
+    setTimeout(reject.bind(null,err), timeout);
+  });
+}
+
 function fetchForecast(coords) {
   return new Promise(function(resolve,reject) {
     fetch(FORECAST_URL(coords))
@@ -49,13 +65,6 @@ function parseDate(d) {
   return {day:d[0],time:d[1].split('-')[0].split(":").slice(0,2).join(":")};
 }
 
-const parseForecast = (f) => f.split('.').filter(e=>!e.match(/wind/gi)).join('.');
-const fmtWind = (w) => w.split('to').map(e=>e.trim()).join('-');
-const showLoader = () => document.querySelector('div.loader').style.display='inline';
-const clearForecast = () => document.querySelector('div.forecast').innerHTML=`<div class="loader"></div>`;
-const hideLoader = () => document.querySelector('div.loader').style.display='none';
-const fTC = (F) => ((F-32)*5/9).toFixed(1);
-
 function fmtDates(a, b) {
   a=parseDate(a);
   b=parseDate(b);
@@ -77,6 +86,14 @@ function showAlerts(a) {
   let alerts=document.querySelector('div.alerts');
   if (a&&a.features&&!a.features.length) { alerts.style.display='none'; }
   else {
+    if (a.saved) {
+      let M=document.querySelector('div.meta');
+      M.style.display='flex';
+      let C=document.createElement('div');
+      C.id='metaChild';
+      C.innerHTML='This is a SAVED offline alert list.';
+      M.appendChild(C);
+    }
     alerts.innerHTML=null;
     alerts.style.display='flex';
     const numAlerts=a.features.length;
@@ -92,7 +109,7 @@ function showAlerts(a) {
       let alert=document.createElement('li');
       alert.id='alert-'+idx;
       alert.classList.add('alert');
-      alert.innerHTML=`<p><span id="alertHeadline"><b>${P.severity}</b>: ${P.headline}</span></p><p>${P.description.replace(/\n/g,'<br />')}</p>`;
+      alert.innerHTML=`<p><span id="alertHeadline"><b>${P.severity}</b>: ${P.headline}</span></p><p>${P.description}</p>`;
       alertList.appendChild(alert);
     });
     alerts.appendChild(alertList);
@@ -100,15 +117,25 @@ function showAlerts(a) {
 }
 
 function showForecast(f) {
-  if (!f.properties.periods.length) { } //no-op
+  if (f.saved) {
+    let M=document.querySelector('div.meta');
+    M.style.display='flex';
+    let C=document.createElement('div');
+    C.id='metaChild';
+    let spl=f.properties.updated.split("T");
+    let updDate=spl[0], updTime=spl[1];
+    C.innerHTML=`This is a SAVED offline forecast, last updated ${updDate} at ${updTime}.`;
+    M.appendChild(C);
+  }
+  if (!f.properties.periods.length) { return displayError('There was an error fetching the weather forecast.'); }
   let forecast=document.querySelector('div.forecast');
   f.properties.periods.forEach((p,idx)=>{
     let period=document.createElement('div');
     let tempUnits='F';
+    let img=G.isOnline ? `<img src=${p.icon} alt=${p.shortForecast}>` : ``;
     period.id=p.number;
     period.classList.add('forecastPeriod');
-    period.innerHTML=`<img src=${p.icon} alt=${p.shortForecast}>
-    <span id="wxHeader"><b>${p.name} ${idx%2==0 ? fmtDates(p.startTime, p.endTime) : ''}</b><br />
+    period.innerHTML=`${img}<span id="wxHeader"><b>${p.name} ${idx%2==0 ? fmtDates(p.startTime, p.endTime) : ''}</b><br />
     ${p.temperature}${tempUnits} ${p.temperatureTrend!==null ? p.temperatureTrend : ''} |
     ${fmtWind(p.windSpeed)} ${p.windDirection}</span><br />
     ${parseForecast(p.detailedForecast)}`;
@@ -117,35 +144,75 @@ function showForecast(f) {
 }
 
 function clearAlertsAndForecast() {
+  let meta=document.querySelector('div.meta');
   let alerts=document.querySelector('div.alerts');
   let forecast=document.querySelector('div.forecast');
   alerts.innerHTML='';
   forecast.innerHTML='';
+  meta.innerHTML='';
+  meta.style.display='none';
+}
+
+function saveAlerts(alerts, pos) {
+  localStorage.setItem(`alerts_${pos}`, JSON.stringify(Object.assign({},alerts,{saved:true})));
+}
+
+function saveForecast(forecast, pos) {
+  localStorage.setItem(`forecast_${pos}`, JSON.stringify(Object.assign({},forecast,{saved:true})));
+}
+
+function loadAlerts(pos) {
+  return new Promise(function(resolve,reject) {
+    let loaded=localStorage.getItem(`alerts_${pos}`);
+    loaded ? resolve(JSON.parse(loaded)) : reject('There are no offline alerts saved for this location.');
+  });
+}
+
+function loadForecast(pos) {
+  return new Promise(function(resolve,reject) {
+    let loaded=localStorage.getItem(`forecast_${pos}`);
+    loaded ? resolve(JSON.parse(loaded)) : reject('There is no offline forecast saved for this location.');
+  });
 }
 
 function handleSubmit(e) {
-  clearAlertsAndForecast();
+  const pos=document.querySelector('select#loc').value;
   e.preventDefault();
-  let sel=document.querySelector('select#loc');
-  let A=fetchAlerts(sel.value);
-  let F=fetchForecast(sel.value);
+  clearAlertsAndForecast();
+  let A, F;
+  if (G.isOnline) {
+    A=timeoutPromise(FETCH_TIMEOUT, new Error('Timed Out while fetching weather alerts!'), fetchAlerts(pos))
+    F=timeoutPromise(FETCH_TIMEOUT, new Error('Timed Out while fetching weather forecast!'), fetchForecast(pos))
+  } else {
+    A=loadAlerts(pos);
+    F=loadForecast(pos);
+  }
   clearForecast();
   showLoader();
-  A.then(alerts=>showAlerts(alerts)).catch(err=>{
-    displayError('There was an error fetching weather alerts.');
-  });
-  F.then(forecasts=>{
-    showForecast(forecasts);
+  A.then(alerts=>{
+    showAlerts(alerts);
+    if (!alerts.saved) { saveAlerts(alerts, pos); }
+  }).catch(err=>displayError(err));
+  F.then(forecast=>{
+    showForecast(forecast);
+    if (!forecast.saved) { saveForecast(forecast, pos); }
     hideLoader();
-  }).catch(err=>{
-    displayError('There was an error fetching the weather forecast.');
-  });
+  }).catch(err=>displayError(err));
+}
+
+const updateIsOnline = (e) => e.type==='offline' ? G.isOnline=false : G.isOnline=true;
+
+function addListeners() {
+  G.isOnline=window.navigator.onLine;
+  window.addEventListener('online', updateIsOnline);
+  window.addEventListener('offline', updateIsOnline);
 }
 
 window.onload=function() {
     document.querySelectorAll('button.state').forEach(b=>{ b.addEventListener('click', populateSelector); });
     document.querySelector('button#submit').addEventListener('click', handleSubmit);
     populateSelector();
+    addListeners();
 }
 
 const D={
