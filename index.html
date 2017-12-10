@@ -3,7 +3,7 @@
   <title>cdt weather</title>
   <script src="./bundle.js"></script>
   <link rel="stylesheet" type="text/css" href="./style.min.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
   <div id="container">
@@ -21,8 +21,11 @@
         <select name="select" id="loc"></select>
         <button id="submit">go!</button>
     </div>
+    <div class="meta"></div>
     <div class="alerts"></div>
-    <div class="forecast"><div class="loader"></div></div>
+    <div class="forecast">
+      <div class="loader"></div>
+    </div>
   </div>
 </body>
 </html>

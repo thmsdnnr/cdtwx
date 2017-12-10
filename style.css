@@ -6,7 +6,7 @@
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
+del, dfn, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
 dl, dt, dd, ol, ul, li,
@@ -77,6 +77,24 @@ div#container {
   border: 1px solid black;
 }
 
+div.meta {
+  display: flex;
+  width: 95%;
+  padding: 4px 0px 10px;
+  height: auto;
+  flex-flow: row wrap;
+  font-size: 0.9em;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+div#metaChild {
+	flex: auto;
+	width: 100%;
+	text-align: center;
+}
+
 div.forecast {
   display: flex;
   width: 95%;
@@ -123,6 +141,7 @@ div.alerts {
   font-size: 0.9em;
   margin: 4px auto;
   border: 1px solid red;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.14), 0 3px 3px rgba(0,0,0,0.11);
 }
 
 .alert-header {
@@ -151,13 +170,6 @@ span#alertHeadline {
   display: inline;
 }
 
-div#buttons {
-  display: flex;
-  flex-flow: row nowrap;
-  width: 95%;
-  margin: 2px auto;
-}
-
 div#dropdown {
   width: 95%;
   margin: 2px auto;
@@ -173,7 +185,7 @@ div#dropdown {
     border-radius: 50%;
     width: 80px;
     height: 80px;
-    margin: auto;
+    margin: 0px auto 10px auto;
     animation: spin 3s linear infinite;
     display: none;
 }
@@ -183,8 +195,16 @@ div#dropdown {
     100% { transform: rotate(360deg); }
 }
 
+div#buttons {
+  display: flex;
+  flex-flow: row wrap;
+  width: 95%;
+  margin: 2px auto;
+}
+
 button {
   flex: auto;
+	width: 33%;
   font-family: inherit;
   font-size: 0.8em;
   background-color: black;
@@ -196,6 +216,7 @@ button {
 }
 
 button#submit {
+	font-size: 1em;
 	width: 30px;
 	height: 30px;
 }
@@ -208,6 +229,7 @@ button.selected {
 
 select {
   flex: auto;
+	font-size: 16px;
   width: 80%;
   border: 1px solid black;
   outline: none;
@@ -221,7 +243,7 @@ h1 {
 }
 
 div#header {
-  padding: 4px 4px 0px 10px;
+  padding: 4px 4px 4px 10px;
   margin: 4px auto;
   height: auto;
 }
@@ -263,7 +285,16 @@ span#attr {
       width: 70%;
     }
 
+		select {
+			font-size: 13px;
+		}
+
+		div#buttons {
+			flex-flow: row nowrap;
+		}
+
     button {
+			width: auto;
       font-size: 1em;
       background-color: black;
       padding: 8px;
