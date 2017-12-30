@@ -133,7 +133,7 @@ function showForecast(f) {
     let period=document.createElement('div');
     let tempUnits='F';
     let img=G.isOnline ? `<img src=${p.icon} alt=${p.shortForecast}>` : ``;
-    period.id=p.number;
+    period.id='period_'+p.number;
     period.classList.add('forecastPeriod');
     period.innerHTML=`${img}<span id="wxHeader"><b>${p.name} ${idx%2==0 ? fmtDates(p.startTime, p.endTime) : ''}</b><br />
     ${p.temperature}${tempUnits} ${p.temperatureTrend!==null ? p.temperatureTrend : ''} |
